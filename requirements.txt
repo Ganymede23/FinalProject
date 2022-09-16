@@ -9,3 +9,5 @@ h5py
 pillow
 sklearn-pandas
 tweepy
+opencv-contrib-python
+imutils
