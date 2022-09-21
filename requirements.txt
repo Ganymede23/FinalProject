@@ -11,3 +11,4 @@ sklearn-pandas
 tweepy
 opencv-contrib-python
 imutils
+imagehash
