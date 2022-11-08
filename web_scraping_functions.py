@@ -201,7 +201,9 @@ def warspotting_scrape(vehicle_type):
 
     save_list(vehicle_type, url_list)
 
-    print(f'Added {len(new_media_list)} {vehicle_type} URLs to the list. Total number: {len(url_list)}')
+    return [len(new_media_list), len(url_list)]
+
+# print(warspotting_scrape('T-62'))
 
 ORYX_VEHICLE_NAMES = {
     'M113': ['M113'],
@@ -257,7 +259,6 @@ def oryx_scrape(vehicle_type):
                     url_list_append(url, url_list)
 
     save_list(vehicle_type, url_list)
-    print(f'Added {counter} {vehicle_type} URLs to the list. Total number: {len(url_list)}')
 
-# warspotting_scrape('T-62')
-# oryx_scrape('T-62')
+    return [counter, len(url_list)]
+
