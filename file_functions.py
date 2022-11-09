@@ -23,3 +23,9 @@ def read_list(vehicle_type: str):
         url_list = []
         pass
     return url_list
+
+def count_urls(vehicle_type):
+    url_list = []
+    url_list = read_list(vehicle_type)
+
+    print(f'\tAmount of {vehicle_type} URLs: {len(url_list)}')
