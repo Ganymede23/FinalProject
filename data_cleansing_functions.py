@@ -60,12 +60,13 @@ def clear_url_list(vehicle_type):
     save_list(vehicle_type, new_url_list)
 
 # Function removes all non-twitter URLs from .json files. Leaves data structure as is.
+# Used when there is a problem with the web scraping functions.
 def remove_all_but_twitter_urls(vehicle_type):
     url_list = []
     url_list = read_list(vehicle_type)
     new_url_list = []
     for item in url_list:
         url, status, media_type, source = item
-        if source != 'oryx' and source != 'unknown':
+        if source == 'twitter':
             new_url_list.append(item)
     save_list(vehicle_type, new_url_list)
