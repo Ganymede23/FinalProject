@@ -161,6 +161,9 @@ def warspotting_scrape(vehicle_type):
     url_list = []
     url_list = url_generator()
 
+    #existing_media_urls = read_list(vehicle_type)
+    #existing_media_urls = [item[0] for item in existing_media_urls]
+
     media_list = []
     new_media_list = []
     for url in url_list:
@@ -246,12 +249,11 @@ def oryx_scrape(vehicle_type):
             url = row[4]
 
             if vehicle_type in ORYX_VEHICLE_NAMES: # This way we only get exact matches with Oryx's .csv, since some 9M113 ATGMs would end up in the M113 APC list, for example
-                for key in ORYX_VEHICLE_NAMES:
-                    for specific_name in ORYX_VEHICLE_NAMES[key]:
-                        if specific_name in system:
-                            counter += 1
-                            # [url, status, media_type, source]
-                            url_list_append(url, url_list)
+                for specific_name in ORYX_VEHICLE_NAMES[vehicle_type]:
+                    if specific_name in system:
+                        counter += 1
+                        # [url, status, media_type, source]
+                        url_list_append(url, url_list)
             else:
                 if vehicle_type in system:
                     counter += 1
