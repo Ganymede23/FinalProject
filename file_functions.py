@@ -1,6 +1,8 @@
 import json
 import os
 
+#img_url.json has a list of lists. Each item has this structure: [url, status, media_type, source]
+
 url_list = []
 
 def save_list(vehicle_type, url_list):
@@ -27,5 +29,5 @@ def read_list(vehicle_type: str):
 def count_urls(vehicle_type):
     url_list = []
     url_list = read_list(vehicle_type)
-
+    
     print(f'\tAmount of {vehicle_type} URLs: {len(url_list)}')

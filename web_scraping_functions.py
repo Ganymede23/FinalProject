@@ -3,6 +3,63 @@ import csv
 from bs4 import BeautifulSoup
 from file_functions import read_list, save_list
 
+# Twitter stuff
+import tweepy
+from twitter_authentication import API_KEY, API_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET, BEARER_TOKEN
+
+# Twitter Auth
+client = tweepy.Client(bearer_token=BEARER_TOKEN)
+
+# VEHICLE LIST
+query_vehicle_list = [  # (model, query content)
+    ('M113', 'M113'),
+    ('MT-LB','MT-LB OR MT-LBV OR MT-LBVM OR MT-LBVMK OR MT-LBVM/K OR MT-LBu'),
+    ('BTR-80','BTR-80 OR BTR-82'),
+    ('BTR-82A','BTR-80A OR BTR-82A'),
+    ('BMP-1','BMP-1'),
+    ('BMP-2','BMP-2 OR BMP-2M'),
+    ('BMP-3','BMP-3 OR BMP-3M'),
+    ('T-62','T-62 OR T-62M OR T-62MV'),
+    ('T-64','T-64 OR T-64A OR T-64B OR T-64BV OR T-64B1M OR T-64BM OR T-64BM2'),
+    ('T-72','T-72 OR T-72A OR T-72AV OR T-72AMT OR T-72B OR T-72BA OR T-72B3 OR T-72B3 OR T-72M OR T-72M1'),
+    ('T-80','T-80 OR T-80B OR T-80BV OR T-80U OR T-80BVM'),
+    ('T-90','T-90 OR T-90A OR T-90M'),
+    ('2S1','2S1 OR Gvozdika'),
+    ('2S3','2S3 OR Akatsiya'),
+    ('2S19','2S19 OR 2S19M OR 2S19M1 OR 2S19M2 OR Msta OR Msta-S OR Msta-SM2'),
+    ('BM-21','BM-21'),
+]
+
+def twitter_scrape(vehicle_type, verbose: bool = True):
+    #model, query_content = vehicle_type
+
+    url_counter = 0
+    url_list = []
+    url_list = read_list(vehicle_type)
+
+    # Users of interest: UAWeapons, OSINTua, RALee85, praisethesteph, 200_zoka, oryxspioenkop, Arslon_Xudosi
+    # query_t72 = 'T-72 has:images -is:retweet (lang:en OR lang:ru OR lang:uk)'
+    # query_mtlb = '(MT-LB OR MT-LBV OR MT-LBVM OR MT-LBVMK OR MT-LBVM/K) -is:retweet from:UAWeapons'
+    # query = '(' + vehicle_type + ') has:images -is:retweet'
+    query = '(' + vehicle_type + ') (russian OR ukrainian OR russia OR ukraine OR DNR OR DPR OR LNR OR LPR OR captured OR abandoned OR damaged OR destroyed OR kherson OR kharkiv OR oblast OR donetsk OR severodonetsk OR luhansk OR lugansk OR Dnieper OR Dnipro OR izium OR izyum OR bakhmut OR offensive OR attack OR repulsed) has:images -is:retweet'
+
+    paginator = tweepy.Paginator(client.search_recent_tweets, query=query, max_results=100, limit=1000, expansions=['attachments.media_keys'], media_fields=['url'])
+    for page in paginator:
+        #print(page.includes['media'])  
+        for item in page.includes['media']:
+            # [url, status, media_type, source]
+            if item.url is not None:
+                if 'pbs.twimg.com/media/' in item.url:
+                    url_list.append([item.url,'unknown','image','twitter'])
+                elif 'twitter.com/'  in item.url:
+                    url_list.append([item.url,'unknown','video','twitter'])
+                url_counter += 1
+
+    save_list(vehicle_type, url_list)
+    if verbose:
+        print(f'\tAdded {url_counter} media URLs of {vehicle_type}s to the list. Total number: {len(url_list)}')
+    return [url_counter, len(url_list)]
+
 WARSPOTTING_VEHICLE_CODES = {
     'M113': [
         2,      # APC/IFV
@@ -216,7 +273,7 @@ ORYX_VEHICLE_NAMES = {
 }
 
 # Function gets all of the links from the Oryx's .csv file that correspond to a vehicle of interest
-def oryx_scrape(vehicle_type):
+def oryx_scrape(vehicle_type, verbose: bool = True):
 
     def url_list_append(url, url_list):
         if 'i.postimg.cc/' in url: 
@@ -262,5 +319,7 @@ def oryx_scrape(vehicle_type):
 
     save_list(vehicle_type, url_list)
 
+    if verbose:
+        print(f'\tAdded {counter} media URLs of {vehicle_type}s to the list. Total number: {len(url_list)}')
     return [counter, len(url_list)]
 
