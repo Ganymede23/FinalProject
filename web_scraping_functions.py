@@ -193,6 +193,20 @@ WARSPOTTING_STATUS_CODES = {
     'destroyed': 4,
     'damaged': 5
 }
+WARSPOTTING_EXCLUDE_CODES = {
+    'turretless': 2,
+    'shattered': 3,
+    'Z': 4,
+    'O': 5,
+    'V': 6,
+    'pl-1': 7,
+    'mine roller': 8,
+    'cope cage': 10,
+    '/': 11,
+    'damaged': 12,
+    'nabla': 13, #inverted delta
+    'box': 14,
+}
 
 def warspotting_scrape(vehicle_type):
     # Generates all of the URL combinations of said vehicle type.
@@ -205,7 +219,14 @@ def warspotting_scrape(vehicle_type):
             if code != vehicle_class:
                 for status_key, status_value in WARSPOTTING_STATUS_CODES.items():
                     for country_key, country_value in WARSPOTTING_COUNTRY_CODES.items():
-                        url = base_url + 'weapon=' + str(vehicle_class) + '&model=' + str(code) + '&status=' + str(status_value) + '&belligerent=' + str(country_value) + '&page='
+                        url = (base_url 
+                            + 'weapon=' + str(vehicle_class) 
+                            + '&model=' + str(code) 
+                            + '&status=' + str(status_value) 
+                            + '&belligerent=' + str(country_value) 
+                            + '&extag=' + str(WARSPOTTING_EXCLUDE_CODES['turretless'])
+                            + '&extag=' + str(WARSPOTTING_EXCLUDE_CODES['shattered'])
+                            + '&page=')
                         url_list.append(url)
         return url_list
 
@@ -227,6 +248,7 @@ def warspotting_scrape(vehicle_type):
 
     url_list = []
     url_list = url_generator()
+    # print(url_list) # DEBUG
 
     #existing_media_urls = read_list(vehicle_type)
     #existing_media_urls = [item[0] for item in existing_media_urls]
