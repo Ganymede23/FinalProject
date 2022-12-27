@@ -5,7 +5,7 @@ from file_functions import read_list, save_list
 
 # Function deletes all duplicate URLs by turning List into a Set.
 
-def remove_url_duplicates(vehicle_type):
+def remove_url_duplicates(vehicle_type, verbose: bool = True):
     # First chunk deletes exact duplicates
     url_list = []
     url_list = read_list(vehicle_type)
@@ -34,7 +34,8 @@ def remove_url_duplicates(vehicle_type):
     url_list = [item for item in url_list if item not in discarded_urls]
 
     save_list(vehicle_type, url_list)
-    print(vehicle_type, '-', (initial_amount-final_amount)+len(discarded_urls), 'duplicated URLs deleted.')
+    if verbose:
+        print(f'\t{vehicle_type}: {(initial_amount-final_amount)+len(discarded_urls)} duplicated URLs deleted')
 
 #remove_url_duplicates('M113')
 
