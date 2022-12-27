@@ -31,7 +31,7 @@ query_vehicle_list = [  # (model, query content)
 ]
 
 def twitter_scrape(vehicle_type, verbose: bool = True):
-    #model, query_content = vehicle_type
+    # model, query_content = vehicle_type
 
     url_counter = 0
     url_list = []
@@ -41,19 +41,29 @@ def twitter_scrape(vehicle_type, verbose: bool = True):
     # query_t72 = 'T-72 has:images -is:retweet (lang:en OR lang:ru OR lang:uk)'
     # query_mtlb = '(MT-LB OR MT-LBV OR MT-LBVM OR MT-LBVMK OR MT-LBVM/K) -is:retweet from:UAWeapons'
     # query = '(' + vehicle_type + ') has:images -is:retweet'
-    query = '(' + vehicle_type + ') (russian OR ukrainian OR russia OR ukraine OR DNR OR DPR OR LNR OR LPR OR captured OR abandoned OR damaged OR destroyed OR kherson OR kharkiv OR oblast OR donetsk OR severodonetsk OR luhansk OR lugansk OR Dnieper OR Dnipro OR izium OR izyum OR bakhmut OR offensive OR attack OR repulsed) has:images -is:retweet'
+    query = '(' + vehicle_type + ') (russian OR ukrainian OR russia OR ukraine OR DNR OR DPR OR LNR ' \
+            'OR LPR OR captured OR abandoned OR damaged OR destroyed OR kherson OR kharkiv OR oblast ' \
+            'OR donetsk OR severodonetsk OR luhansk OR lugansk OR Dnieper OR Dnipro OR izium OR izyum ' \
+            'OR bakhmut OR offensive OR attack OR repulsed) has:images -is:retweet'
 
-    paginator = tweepy.Paginator(client.search_recent_tweets, query=query, max_results=100, limit=1000, expansions=['attachments.media_keys'], media_fields=['url'])
+    paginator = tweepy.Paginator(
+        client.search_recent_tweets, 
+        query=query, 
+        max_results=100, 
+        limit=1000, 
+        expansions=['attachments.media_keys'], 
+        media_fields=['url'])
     for page in paginator:
-        #print(page.includes['media'])  
-        for item in page.includes['media']:
-            # [url, status, media_type, source]
-            if item.url is not None:
-                if 'pbs.twimg.com/media/' in item.url:
-                    url_list.append([item.url,'unknown','image','twitter'])
-                elif 'twitter.com/'  in item.url:
-                    url_list.append([item.url,'unknown','video','twitter'])
-                url_counter += 1
+        # print(page.includes['media']) 
+        if page.data:
+            for item in page.includes['media']:
+                # [url, status, media_type, source]
+                if item.url is not None:
+                    if 'pbs.twimg.com/media/' in item.url:
+                        url_list.append([item.url,'unknown','image','twitter'])
+                    elif 'twitter.com/'  in item.url:
+                        url_list.append([item.url,'unknown','video','twitter'])
+                    url_counter += 1
 
     save_list(vehicle_type, url_list)
     if verbose:
